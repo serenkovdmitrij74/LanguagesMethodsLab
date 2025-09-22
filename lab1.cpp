@@ -25,7 +25,7 @@ vector<int> create_posl(int a, int b) {
 
 
 void inc_to_max(int e, vector<int> posl, vector<int> max_posl) {
-    for (int i = posl[e]; i < max_posl[e]; i++) {
+    for (int i = posl[e]; i <= max_posl[e]; i++) {
         posl[e] = i;
         if (e + 1 < posl.size()) {
             posl[e+1] = i+1;
