@@ -33,7 +33,7 @@ public:
             cout << " +" << i << "i";
         else if (i == -1)
             cout << " -" << "i";
-        else if (i < 0)
+        else (i < 0)
             cout << " " << i << "i";
     }
 
