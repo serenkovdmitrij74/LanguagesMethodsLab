@@ -8,8 +8,8 @@ namespace ComlexLab
 {
     public class Complex
     {
-        private float r;
-        private float i;
+        public float r { get; private set;}
+        public float i { get; private set;}
 
         public Complex(float r=0, float i = 0)
         {
@@ -68,11 +68,11 @@ namespace ComlexLab
     {
         static void Main(string[] args)
         {
-            Complex a = new Complex("1 dfs+3i");
+            Complex a = new Complex("1 +3i");
             Complex b = new Complex(1, -2);
 
             Complex c = a+b;
-            Console.WriteLine(c);
+            Console.WriteLine(a);
 
             c = a - b;
             Console.WriteLine(c);
