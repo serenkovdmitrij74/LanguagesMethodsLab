@@ -3,6 +3,7 @@
 
 using namespace std;
 
+
 class SymbString
 {
 protected:
@@ -110,7 +111,7 @@ private:
 		int result = 0;
 		int i = 0;
 		while (s[i] != '\0') {
-			result = result * 8 + (int)s[i];
+			result = result * 8 + s[i]-'0';
 			i++;
 		}
 		return result;
@@ -147,6 +148,14 @@ public:
 			this->workStr = copy((char*)"0");
 			cout << "Введеное число неявляется 8ричным, заменено на 0. ID:" << id;
 		}
+	}
+
+	void print() {
+		cout << "\nid: ";
+		PrintStr(id);
+		cout << "\nString: ";
+		PrintStr(workStr);
+		cout << "\nInteger: "<<(OctToInt(workStr));
 	}
 
 	OctString operator-(const OctString& b) {
@@ -240,9 +249,10 @@ private:
 
 int main()
 {
-	SymbString a((char*)"12", (char*)"");
-	SymbString b((char*)"12", (char*)"fd ");
+	OctString a((char*)"12", (char*)"17");
+	OctString b((char*)"13", (char*)"2");
 	a.print();
+	b.print();
 	a = a - b;
 	a.print();
 
