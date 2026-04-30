@@ -1,5 +1,7 @@
 #include <iostream>
-#include <vector>
+#include <map>
+#include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -59,9 +61,16 @@ protected:
 	}
 
 public:
+	SymbString(){}
 	SymbString(char* id, char* workStr)
 	{
 		this->id = copy(id);
+		this->workStr = copy(workStr);
+	}
+
+	SymbString(string id, char* workStr)
+	{
+		this->id = copy(id.c_str());
 		this->workStr = copy(workStr);
 	}
 
@@ -85,6 +94,10 @@ public:
 
 	char* getID() {
 		return id;
+	}
+
+	char* getSTR() {
+		return workStr;
 	}
 
 	SymbString operator-(const SymbString& b) {
@@ -142,11 +155,18 @@ private:
 	}
 
 public:
-
+	OctString(){}
 	OctString(char* id, char* workStr) : SymbString(id, workStr) {
 		if (!isValid(workStr)) {
 			this->workStr = copy((char*)"0");
 			cout << "Введеное число неявляется 8ричным, заменено на 0. ID:" << id;
+		}
+	}
+
+	OctString(SymbString other) : SymbString(id, workStr) {
+		if (this != &other) {
+			this->id = copy(other.getID());
+			this->workStr = copy(other.getSTR());
 		}
 	}
 
@@ -171,13 +191,30 @@ public:
 		delete[] newStr;
 		return res;
 	}
+
+	OctString& operator=(SymbString& other) {
+		if (this != &other) {
+			delete[] id;
+			delete[] workStr;
+			this->id = copy(other.getID());
+			this->workStr = copy(other.getSTR());
+		}
+		return *this;
+	}
 };
 
 enum Type{ STR, OCT };
 
 
 class Factory {
+private:
+	map <string, SymbString*> STRs;
+	int freeId;
 public:
+	Factory() {
+		freeId = 0;
+	}
+	
 	Type SetType(int num) {
 		switch (num) {
 		case 1:
@@ -194,65 +231,73 @@ public:
 		cout << "Выберете тип данных\n";
 		cout << "1 - строка\n";
 		cout << "2 - число\n";
-		Type item = SetType(1);
 
-		char ID[100];
-		cout << "Введите ID" << endl;
-		cin >> ID;
-		cin.get();
+		int type;
+		cin >> type;
+		Type item = SetType(type);
 
-		cout << "Введите размер стороны" << endl;
-		char str[1024];
+		cout << "Введите восьмеричное число" << endl;
+		char str[100];
 		cin >> str;
 
 		SymbString* newObj = nullptr;
+		string ID = to_string(freeId);
+		char* objId = new char[ID.size()+1];
 		if (item == STR) {
-			newObj = new SymbString(ID, str);
+			newObj = new SymbString(objId, str);
 		}
 		else if (item == OCT) {
-			newObj = new OctString(ID, str);
+			newObj = new OctString(objId, str);
 		}
 		else {
 			cout << "ERROR" << endl;
 			return;
 		}
 
-		if (newObj != nullptr) {
-			STRs.push_back(newObj);
+		if (newObj != nullptr && STRs.count(ID)==0) {
+			STRs[ID]=newObj;
 			cout << "Объект " << ID << " успешно создан." << endl;
+			freeId++;
+		}
+		else if (STRs.count(ID) != 0) {
+			cout << "Ошибка во время создания объекта ID ", ID, " уже занят";
+			freeId++;
 		}
 	}
-	void Delete() {
-	if (!STRs.size()) {
-		cout << "Нечего удалять";
-		return;
-	}
-	string searchID;
-	cout << "Введите ID, который нужно удалить" << endl;
-	cin >> searchID;
 
-	for (auto i = STRs.begin(); i != STRs.end(); ++i) {
-		if ((*i)->getID() == searchID) {
-			delete* i;
-			STRs.erase(i);
+	SymbString* GetSTR(string id) {
+		if (STRs.count(id) != 0)
+			return STRs[id];
+		cout << "Объект с id: ", id, "несуществует";
+		return nullptr;
+	}
+
+	void Delete() {
+		string searchID;
+		cout << "Введите ID, который нужно удалить" << endl;
+		cin >> searchID;
+
+		if (STRs.count(searchID) != 0) {
+			delete STRs[searchID];
+			STRs.erase(searchID);
 
 			cout << "Объект успешно удален" << endl;
 			return;
 		}
-	}
-	cout << "Объект с Id " << searchID << " не найден." << endl;
+		cout << "Объект с Id " << searchID << " не найден." << endl;
 }
-private:
-	vector <SymbString*> STRs;
 };
 
 
 int main()
 {
-	OctString a((char*)"12", (char*)"17");
-	OctString b((char*)"13", (char*)"2");
-	a.print();
-	b.print();
+	Factory factory;
+	factory.Add();
+	factory.Add();
+	OctString a, b;
+	a = *factory.GetSTR("0");
+	b = *factory.GetSTR("1");
+
 	a = a - b;
 	a.print();
 
