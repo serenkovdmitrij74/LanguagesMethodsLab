@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <clocale>
+#include <typeinfo>
 
 using namespace std;
 
@@ -11,6 +13,9 @@ private:
     int flightNum;
     string planeType;
 public:
+    friend ostream& operator<<(ostream& os, const AEROFLOT& f);
+    friend istream& operator>>(istream& is, AEROFLOT& f);
+
     AEROFLOT() {}
 
     AEROFLOT(string dest, int flightNum, string planeType) {
@@ -47,40 +52,62 @@ public:
         cout << "Номер рейса: ", flightNum, "\nПункт назначения: ", dest, "\nТип самолета: ", planeType, "\n";
     }
 
-    static bool AeroSort(AEROFLOT a, AEROFLOT b) {
-        return (a.GetDestination()<b.GetDestination());
+    bool operator<(const AEROFLOT& other) const {
+        return this->dest < other.dest;
     }
 };
 
+ostream& operator<<(ostream& os, const AEROFLOT& f) {
+    os << "Пункт назначения: " << f.dest << ", Номер рейса: " << f.flightNum
+        << ", Тип самолета: " << f.planeType;
+    return os;
+}
 
-int main()
-{
-    
-    AEROFLOT flights[7];
-    int ef = 0;
-    string a = "ABC", b="BCD";
+istream& operator>>(istream& is, AEROFLOT& f) {
+    cout << "Введите пункт назначения: ";
+    is >> f.dest;
 
-    cout << (a > b)<< endl;
-
-
-    cout << ('A'<'B');
-
-    while (ef < 7){
-        string dest;
-        int num;
-        string type;
-        cout << "Введите пункт назначения: \n";
-        cin >> dest;
-        cout << "Введите номер рейса: \n";
-        cin >> num;
-        cout << "Введите тип самолета: \n";
-        cin >> type;
-
-        flights[ef] = AEROFLOT(dest, num, type);
-        ef += 1;
+    cout << "Введите номер рейса: ";
+    while (!(is >> f.flightNum)) {
+        is.clear();
+        is.ignore(1000, '\n');
+        cout << "Ошибка! Введите корректное число для номера рейса: ";
     }
 
-    
+    cout << "Введите тип самолета: ";
+    is >> f.planeType;
+    return is;
+}
 
-    sort(flights, flights + 7, AEROFLOT.AeroSort);
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    int len = 2;
+    AEROFLOT* flights = new AEROFLOT[len];
+
+    for (int i = 0; i < len; ++i) {
+        cout << "Ресй " << i + 1 << ":\n";
+        cin >> flights[i];
+    }
+
+    sort(flights, flights + len);
+
+    string searchType;
+    cout << "\nВведите тип самолет: ";
+    cin >> searchType;
+
+    bool found = false;
+    for (int i = 0; i < len; ++i) {
+        if (flights[i].GetPlaneType() == searchType) {
+            cout << "Пункт: " << flights[i].GetDestination() << " Рейс: " << flights[i].GetFlightNumber() << endl;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Рейсов нету" << endl;
+    }
+
+    return 0;
 }
