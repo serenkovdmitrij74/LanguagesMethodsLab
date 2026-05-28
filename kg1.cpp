@@ -1,4 +1,11 @@
 https://drive.google.com/file/d/1BPu9EcBI0Rjb3IuSb_aDxyzOVDqiuw0G/view?usp=drivesdk
+
+$(ProjectDir)
+
+opengl32.lib
+glu32.lib
+glut32.lib
+
 #include <windows.h>
 #include <GL/glut.h>
 
