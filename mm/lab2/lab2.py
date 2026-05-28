@@ -24,7 +24,7 @@ def fill_mis(matrix):
     return filled_matrix
 
 def mse(y_true, y_pred):
-    return np.mean((y_true - y_pred)**2)
+    return np.sum((y_true - y_pred)**2)/len(y_pred)
 
 
 def fit(X_train, Y_train, model_type):
